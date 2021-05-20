@@ -28,7 +28,7 @@ try:
     print('Generating fake records...')
     while True:
         file = open(OUTPUT_FILE_PATH, 'a')  # w+ is to append new lines to the file
-        voltage = -0.58 + random.randrange(-1, 1)
+        voltage = -0.58 + random.random()
         file.write(f'{voltage},-11.72,23.93,1000.49,3.14,-0.35,-0.73,-9.15,-51.00,-86.10,27.31\n')
         file.close()
         time.sleep(1)

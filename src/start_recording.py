@@ -4,14 +4,7 @@ import os
 import keyboard
 import subprocess
 import datetime
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.dates as md
-from matplotlib.animation import FuncAnimation
-from matplotlib import figure
 from time import sleep
-
-plt.style.use('fivethirtyeight')
 
 USERNAME = 'will'
 
@@ -20,12 +13,13 @@ USERNAME = 'will'
 OPTIONS = [
     ('StartEngine', ['engine', 'start']),
     ('StopEngine', ['engine', 'stop']),
-    ('Accelerate', ['drive', 'accelerate']),
+    ('Accelerate', ['drive', 'start']),
     ('Deceleration', ['drive', 'stop']),
 ]
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), '..')
 VECTOR_TOML_FILE_PATH = os.path.join(BASE_DIR, 'vector.toml')
+RECORDING_FILE = os.path.join(BASE_DIR, 'recording.log')
 
 print('Select one of the following profiles:')
 for index, (option, dirs) in enumerate(OPTIONS):
@@ -40,30 +34,14 @@ print('Hit space key to start recording...')
 
 ELAPSED_START = datetime.datetime.now()
 OUTPUT_FILE_DIR = os.path.join(BASE_DIR, 'data', 'out', OPTIONS[selected_option][1][0], OPTIONS[selected_option][1][1])
+PLOT = os.path.join(BASE_DIR, 'src', 'plot.py')
 recording_state = 0
-pid = ''
-
-time_vals = []
-voltage_vals = []
+pids = []
 
 def out(command):
     result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
     return result.stdout
 
-def animate(i):
-    data = pd.read_json(os.path.join(BASE_DIR, 'recording.log'), lines=True)
-    time_vals = data['timestamp']
-    voltage_vals = data['voltage']
-    
-    ax = plt.gca()
-    dfmt = md.DateFormatter('%H:%M:%S')
-    ax.xaxis.set_major_formatter(dfmt)
-
-    plt.cla()
-    plt.plot(time_vals, voltage_vals)
-    plt.tight_layout()
-    plt.plot(1)
-ani = {}
 while recording_state < 2:
     duration = datetime.datetime.now() - ELAPSED_START
     if keyboard.is_pressed(' '):
@@ -73,10 +51,10 @@ while recording_state < 2:
             print('Stopped Recording')
             file_name = str(uuid.uuid4())
             log_file = os.path.join(OUTPUT_FILE_DIR, f'{file_name}.log')
-            ani.save(os.path.join(BASE_DIR, f'{file_name}.jpg'))
-            ani = None
-            if int(pid) > 0:
-                os.system(f'sudo kill {int(pid)}')
+            if len(pids) > 0:
+                for pid in pids:
+                    os.system(f'sudo kill {pid}')
+                    
                 os.system(f'sudo -u {USERNAME} mkdir -p \"{OUTPUT_FILE_DIR}\"')
                 os.system(f'mv {BASE_DIR}/recording.log {log_file}')
             else:
@@ -89,12 +67,11 @@ while recording_state < 2:
             print('Started recording')
             ELAPSED_START = datetime.datetime.now()
             process = subprocess.Popen(["vector", "--config", VECTOR_TOML_FILE_PATH])
-            pid = process.pid
+            pids.append(process.pid)
 
-            # start plotting
-            ani = FuncAnimation(plt.gcf(), animate, interval=1000)
-            plt.tight_layout()
-            plt.show(block=False)
+            print(f'Calling {PLOT}')
+            plotProc = subprocess.Popen(['python3', PLOT])
+            pids.append(plotProc.pid)
 
         recording_state += 1
         sleep(0.1)
