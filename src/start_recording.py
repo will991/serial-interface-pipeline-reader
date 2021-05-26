@@ -14,7 +14,7 @@ OPTIONS = [
     ('StartEngine', ['engine', 'start']),
     ('StopEngine', ['engine', 'stop']),
     ('Accelerate', ['drive', 'start']),
-    ('Ruhe', ['ruhe', 'stand']),
+    ('Ruhe', ['electronic', 'load']),
 ]
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), '..')
