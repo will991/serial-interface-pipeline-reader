@@ -1,4 +1,4 @@
-%% Drive Test
+%% Ruhe
 load('accX.mat')
 load('accY.mat');
 load('accZ.mat');

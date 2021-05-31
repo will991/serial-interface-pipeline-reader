@@ -1,4 +1,4 @@
-%% Drive Test
+%% Shake Test
 load('accX.mat')
 load('accY.mat');
 load('accZ.mat');
