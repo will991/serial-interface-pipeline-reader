@@ -10,26 +10,30 @@
   inputs = ["in"]
   drop_on_error = true
   source = """
+    # Voltage + Gyro
     # . |= parse_regex!(.message, r'^(?P<voltage>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<accX>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<accY>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<accZ>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<rotX>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<rotY>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<rotZ>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<magX>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<magY>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<magZ>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<temp>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?)$')
-    . |= parse_regex!(.message, r'^(?P<voltage>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),$')
+    # Voltage only
+    # . |= parse_regex!(.message, r'^(?P<voltage>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),$')
+    # Gyro only
+    . |= parse_regex!(.message, r'^((?P<accX>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<accY>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<accZ>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<rotX>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<rotY>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<rotZ>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<magX>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<magY>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<magZ>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?),(?P<temp>(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?)$')
 
     # Coerce parsed fields
     .timestamp = now()
-    .voltage = to_float!(.voltage)
+    # .voltage = to_float!(.voltage)
 
-    # .accX = to_float!(.accX)
-    # .accY = to_float!(.accY)
-    # .accZ = to_float!(.accZ)
+    .accX = to_float!(.accX)
+    .accY = to_float!(.accY)
+    .accZ = to_float!(.accZ)
    
-    # .rotX = to_float!(.rotX)
-    # .rotY = to_float!(.rotY)
-    # .rotZ = to_float!(.rotZ)
+    .rotX = to_float!(.rotX)
+    .rotY = to_float!(.rotY)
+    .rotZ = to_float!(.rotZ)
     
-    # .magX = to_float!(.magX)
-    # .magY = to_float!(.magY)
-    # .magZ = to_float!(.magZ)
+    .magX = to_float!(.magX)
+    .magY = to_float!(.magY)
+    .magZ = to_float!(.magZ)
 
-    # .temp = to_float!(.temp)
+    .temp = to_float!(.temp)
 
     # Removing Fields
     del(.message)
