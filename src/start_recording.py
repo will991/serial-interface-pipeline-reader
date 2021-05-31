@@ -11,10 +11,10 @@ USERNAME = 'will'
 # Contants
 # Defines options by mapping option name to directory path for log files
 OPTIONS = [
-    ('StartEngine', ['engine', 'start']),
-    ('StopEngine', ['engine', 'stop']),
-    ('Accelerate', ['drive', 'start']),
-    ('Ruhe', ['electronic', 'load']),
+    ('Gyro Ruhe', ['gyro', 'ruhe']),
+    ('Gyro Shake', ['gyro', 'shake']),
+    ('Gyro Drive', ['gyro', 'drive']),
+    ('Gyro Stop', ['gyro', 'stop']),
 ]
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), '..')
